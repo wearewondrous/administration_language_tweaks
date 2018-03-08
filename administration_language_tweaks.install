@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for administration_language_tweaks.
+ */
+
+
+/**
+ * Implements hook_install().
+ */
+function administration_language_tweaks_install() {
+  module_set_weight('administration_language_tweaks', 99);
+}

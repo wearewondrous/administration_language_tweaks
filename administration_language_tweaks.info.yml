@@ -1,0 +1,7 @@
+name: 'Administration language tweaks'
+type: module
+description: 'Administration language tweaks.'
+core: 8.x
+package: 'WONDROUS'
+dependencies:
+  - administration_language_negotiation

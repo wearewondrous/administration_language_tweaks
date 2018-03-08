@@ -1,0 +1,16 @@
+{
+  "name": "wondrousllc/administration_language_tweaks",
+  "type": "drupal-module",
+  "description": "Administration pages language setting.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/WondrousLLC/administration_language_tweaks",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://github.com/WondrousLLC/administration_language_tweaks/issues",
+    "source": "https://github.com/WondrousLLC/administration_language_tweaks.git"
+  },
+  "require": {
+    "drupal/administration_language_negotiation": "^1.4"
+  }
+}

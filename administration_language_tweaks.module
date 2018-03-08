@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * Contains administration_language_tweaks.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_help().
+ */
+function administration_language_tweaks_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the administration_language_tweaks module.
+    case 'help.page.administration_language_tweaks':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Administration pages language setting.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ *
+ * Alters the local tasks titles and translates to the administration default
+ * language.
+ *
+ * @param $local_tasks
+ */
+function administration_language_tweaks_local_tasks_alter(&$local_tasks) {
+  // Get the administration default language
+  // see  /admin/config/regional/language/detection/administration_language
+  $administration_language = _administration_language_tweaks_get_administration_langauge();
+
+  // Iterate over the local tasks and translates the title.
+  foreach ($local_tasks as $key => &$local_task) {
+    $title = $local_task['title'];
+    $options = ['langcode' => $administration_language];
+    $arguments = [];
+
+    // In some case the title is a string.
+    if (is_string($title)) {
+      $untranslated_string = $title;
+    }
+    elseif ($title instanceof TranslatableMarkup) {
+      // Merge the current options and override the language.
+      $options += $title->getOptions();
+      $untranslated_string = $title->getUntranslatedString();
+      $arguments = $title->getArguments();
+    }
+
+    // Create the new translation.
+    $title = new TranslatableMarkup($untranslated_string, $arguments, $options);
+    $local_task['title'] = $title->render();
+  }
+}
+
+/**
+ * Helper function to get the administration language.
+ *
+ * Set the language on page /admin/config/regional/language/detection/administration_language
+ *
+ * @return array|mixed|null
+ */
+function _administration_language_tweaks_get_administration_langauge() {
+  return \Drupal::config('administration_language_negotiation.negotiation')->get('default_language');
+}
+

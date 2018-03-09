@@ -45,9 +45,9 @@
     
     2.2. Configure the administration language /admin/config/regional/language/detection/administration_language
       
-        Set default language: English
-        Hint: clear the cache after this change
-        
-        Enable translation for contextual links, the contextual links ar loaded via ajax => add path "/contextual/render"
-        Hint: The contextual links are cached via the browser Session Storage, clear all Drupal.contextual.*
+    Enable translation by path for
+  
+    - Contextual links, the contextual links ar loaded via ajax by calling "/contextual/render"
+    
+      Hint: The contextual links are cached via the browser Session Storage, clear all Drupal.contextual.*
  

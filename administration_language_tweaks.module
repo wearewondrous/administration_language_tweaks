@@ -63,11 +63,16 @@ function administration_language_tweaks_local_tasks_alter(&$local_tasks) {
 /**
  * Helper function to get the administration language.
  *
- * Set the language on page /admin/config/regional/language/detection/administration_language
- *
  * @return array|mixed|null
  */
 function _administration_language_tweaks_get_administration_langauge() {
-  return \Drupal::config('administration_language_negotiation.negotiation')->get('default_language');
+  $langcode = FALSE;
+  $current_user = \Drupal::currentUser();
+
+  if ($current_user->hasPermission('use_administration_language_negotiation')) {
+    $langcode = $current_user->getPreferredAdminLangcode();
+  }
+
+  return $langcode;
 }
 

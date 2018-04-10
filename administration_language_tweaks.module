@@ -5,8 +5,10 @@
  * Contains administration_language_tweaks.module.
  */
 
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_help().
@@ -76,3 +78,64 @@ function _administration_language_tweaks_get_administration_langauge() {
   return $langcode;
 }
 
+/**
+ * Entity label callback function.
+ *
+ * @param $entity
+ *   The entity object.
+ *
+ * @return null|string
+ */
+function administration_language_tweaks_entity_label_callback($entity) {
+  $label = [];
+  // The LanguageInterface::TYPE_INTERFACE is already set by the negotiator
+  // Drupal\administration_language_negotiation\Plugin\LanguageNegotiation\LanguageNegotiationAdministrationLanguage
+  $langcode = \Drupal::languageManager()
+    ->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE)
+    ->getId();
+  if ($langcode != $entity->language() && $entity->hasTranslation($langcode)) {
+    $entity_clone = $entity->getTranslation($langcode);
+    if ($entity_clone) {
+      $label[] = administration_language_tweaks_get_entity_label($entity_clone);
+    }
+  }
+  $label[] = administration_language_tweaks_get_entity_label($entity);
+
+  return $label ? implode(' - ', $label) : NULL;
+}
+
+/**
+ * Loads the entity label.
+ *
+ * @param $entity
+ *   The entity object.
+ *
+ * @return null|string
+ *   The entity label string.
+ */
+function administration_language_tweaks_get_entity_label($entity) {
+  $entity_type = $entity->getEntityType();
+  $label_callback = $entity_type->getLabelCallback();
+
+  // The function Drupal\Core\Entity\ContentEntityBase::label() loads the label
+  // by calling getEntityKey(). This function is protected and can't be called.
+  // Therefor we call the same entity label function but turning off the label
+  // callback, resulting the call of getEntityKey() by the class itself.
+  $entity_type->setLabelCallback(NULL);
+  $label = $entity->label();
+  $entity_type->setLabelCallback($label_callback);
+
+  return $label;
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function administration_language_tweaks_entity_type_alter($entity_types) {
+  foreach ($entity_types as $entity_type => $info) {
+    // Override the label for Content Entities without label callback only.
+    if ($info instanceof ContentEntityTypeInterface && !$info->hasLabelCallback()) {
+      $info->setLabelCallback('administration_language_tweaks_entity_label_callback');
+    }
+  }
+}

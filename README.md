@@ -44,10 +44,14 @@
         1. URL
     
     2.2. Configure the administration language /admin/config/regional/language/detection/administration_language
-      
-    Enable translation by path for
-  
-    - Contextual links, the contextual links ar loaded via ajax by calling "/contextual/render"
+
+    PATHS
+
+    - add path /contextual/render for contextual links, the path is loaded via ajax by calling "/contextual/render"
     
       Hint: The contextual links are cached via the browser Session Storage, clear all Drupal.contextual.*
+
+    ADMIN ROUTES
+
+    - Enable to automatically apply on routes with option _admin_route
  
